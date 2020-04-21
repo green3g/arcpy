@@ -1,6 +1,8 @@
 import arcpy
 from mako.template import Template
 from importlib import import_module
+from .constants import PACKAGE_DIR
+from os.path import join
 
 try:
     import_module('env')
@@ -79,7 +81,8 @@ def get_layers():
     return layers
 
 def create_models():
-    template = Template(filename='./generator/table.mako')
+    template_path = join(PACKAGE_DIR, 'templates', 'table.mako')
+    template = Template(filename=template_path)
     layers = get_layers()
 
     for item in layers:
