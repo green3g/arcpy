@@ -1,0 +1,12 @@
+dist/
+build/
+migrations/
+pro_project/
+__pycache__/
+
+
+*.egg-info/
+*.sqlite
+
+.vscode/
+.idea/
