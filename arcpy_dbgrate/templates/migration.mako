@@ -11,7 +11,7 @@ Update fields: ${len(update_fields)}
 
 """
 import arcpy
-from utilities.utilites import update_field
+from arcpy_dbgrate.arcpy_helpers import update_field
 
 def upgrade():
     % for item in add_fields:

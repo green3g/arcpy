@@ -1,6 +1,6 @@
 import env
 import arcpy
-from create_models import get_layers, map_fields, filter_fields
+from .create_models import get_layers, map_fields, filter_fields
 from glob import glob
 from os import getcwd, environ
 from os.path import join, basename , isfile

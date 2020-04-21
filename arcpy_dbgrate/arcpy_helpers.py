@@ -11,7 +11,7 @@ def add_field(table, field):
 def add_fields(table, fields):
     print('Adding {} fields to {}'.format(len(fields), table))
     for field in fields:
-        add_field(field, table)
+        add_field(table, field)
 
 
 def add_domain(workspace, name, options):
@@ -35,7 +35,7 @@ def add_table(workspace, name, fields, feature_class=False, geometry_type='POINT
     arcpy.management.AddIndex(name, ['globalid'], "unique_globalid_{}".format(name), "UNIQUE", "ASCENDING")
 
     print('Adding fields to {}'.format(name))
-    add_fields(fields, name)
+    add_fields(name, fields)
 
 def update_field(table, field):
 
@@ -44,7 +44,7 @@ def update_field(table, field):
 
     # add the new temp field
     print('Add temp field {}'.format(temp_field['name']))
-    add_field(temp_field, table)
+    add_field(table, temp_field)
     print('Calculate temp field to {}'.format(field['name']))
     arcpy.management.CalculateField(table, temp_field['name'], '!{}!'.format(field['name']), "PYTHON")
 
@@ -57,7 +57,7 @@ def update_field(table, field):
     if 'rename' in field:
         new_field['name'] = field['rename']
     print('Add final field {}'.format(new_field['name']))
-    add_field(new_field, table)
+    add_field(table, new_field)
     print('Calculate new field from {}'.format(temp_field['name']))
     arcpy.management.CalculateField(table, new_field['name'], '!{}!'.format(temp_field['name']), 'PYTHON')
 
