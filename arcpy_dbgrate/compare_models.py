@@ -41,7 +41,7 @@ def compare_models():
     models = [basename(f)[:-3] for f in glob(join(getcwd(), 'models', "*.py")) if isfile(f) and not f.endswith('__init__.py')]
     
     for model in models:
-        print('Checking {}'.format(model))
+        logging.debug('Checking {}'.format(model))
         table = getattr( import_module('models.{}'.format(model)), model)
         table_name = getattr(table, '_name')
 
@@ -55,19 +55,19 @@ def compare_models():
             field_obj['name'] = field_name
             existing = find_field(existing_fields, field_name)
             if not existing:
-                print('Field does not exist yet {}'.format(field_name))
+                logging.debug('Field does not exist yet {}'.format(field_name))
                 add_fields.append({'table': table_name, 'field': field_obj})
             else:
                 should_update = False
                 for key in filter(filter_field_keys, field_obj.keys()):
                     if not compare_key(field_obj, existing, key):
-                        print('Key is different: ', key)
+                        logging.debug('Key is different: ', key)
                         should_update = True
                 if should_update:
-                    print('We should update field {}'.format(field_name))
+                    logging.debug('We should update field {}'.format(field_name))
                     update_fields.append({'table': table_name, 'field': field_obj})
                 else:
-                    print('Field {} is the same'.format(field_name))
+                    logging.debug('Field {} is the same'.format(field_name))
 
         # check for fields that need to be deleted
         for field in existing_fields:
@@ -76,10 +76,10 @@ def compare_models():
                 defined_field = getattr(table, field_name)
             except:
                 # field doesn't exist
-                print('Field should be removed: {}'.format(field_name))
+                logging.debug('Field should be removed: {}'.format(field_name))
                 remove_fields.append({'table': table_name, 'field': field})
 
-    print('Add: ', add_fields, '\nUpdate: ', update_fields, '\nRemove: ', remove_fields)
+    logging.debug('Add: ', add_fields, '\nUpdate: ', update_fields, '\nRemove: ', remove_fields)
     return {
         'add_fields': add_fields,
         'update_fields': update_fields,
@@ -106,7 +106,7 @@ def generate_migration(name, data={}, template=None):
     data['create_date'] = datetime.now().ctime()
 
     # write it to a migration file
-    print('rendering template with data', data)
+    logging.debug('rendering template with data', data)
     with open(join('migrations', file_name), 'w') as f:
         f.write(template.render(**data))
 

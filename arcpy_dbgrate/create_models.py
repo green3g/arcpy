@@ -3,11 +3,12 @@ from mako.template import Template
 from importlib import import_module
 from .constants import PACKAGE_DIR
 from os.path import join
+import logging
 
 try:
     import_module('env')
 except:
-    print('Error! Cannot import env module. Ensure env.py exists in current working directory')
+    logging.error('Error! Cannot import env module. Ensure env.py exists in current working directory')
     
 field_types = {
     'String': 'TEXT',
@@ -99,7 +100,8 @@ def create_models():
         try:
             relationships = list(map(map_relationships, [arcpy.Describe(name) for name in desc.relationshipClassNames]))
         except Exception as e:
-            print('Error getting relationships', e)
+            logging
+            logging.debug('Error getting relationships', e)
             relationships = []
             continue
         table['relationships'] = relationships
@@ -108,14 +110,14 @@ def create_models():
             # arcgis errors out on this sometimes...wtf 
             fields = arcpy.ListFields(table['name'])
         except Exception as e:
-            print('Error on ListFields', e)
+            logging.debug('Error on ListFields', e)
             fields =  []
             continue
 
         # build field info
         table['fields'] = list(filter(filter_fields, map(map_fields,  fields)))
 
-        print('Writing model for {}'.format(name))
+        logging.debug('Writing model for {}'.format(name))
         with open('./models/{}.py'.format(name), 'w') as f:
             f.write(template.render(table = table))
 
