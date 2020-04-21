@@ -24,7 +24,7 @@ def auto_migration():
     automatically create an arcpy migration from model changes
     """
     from arcpy_dbgrate.compare_models import create_migration
-    _create_migration()
+    create_migration()
 
 if __name__ == '__main__':
     logging.info('arcpy: Current working directory is {}'.format(WORKING_DIR))
