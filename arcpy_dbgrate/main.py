@@ -17,7 +17,7 @@ def create_models():
 
 @cli.command()
 def create_migration():
-    from arcpy_dbgrate.compare_models import create_migration
+    from arcpy_dbgrate.compare_models import create_migration as _create_migration
     _create_migration()
 
 if __name__ == '__main__':
