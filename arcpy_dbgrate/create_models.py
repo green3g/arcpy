@@ -1,7 +1,12 @@
-import env
 import arcpy
 from mako.template import Template
+from importlib import import_module
 
+try:
+    import_module('env')
+except:
+    print('Error! Cannot import env module. Ensure env.py exists in current working directory')
+    
 field_types = {
     'String': 'TEXT',
 }
