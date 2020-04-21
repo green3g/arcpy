@@ -16,9 +16,9 @@ def create_models():
     _create_models()
 
 @cli.command()
-def generate_migration():
-    from arcpy_dbgrate.compare_models import generate_migration as _generate_migration
-    _generate_migration()
+def create_migration():
+    from arcpy_dbgrate.compare_models import create_migration
+    _create_migration()
 
 if __name__ == '__main__':
     logging.info('arcpy: Current working directory is {}'.format(WORKING_DIR))
