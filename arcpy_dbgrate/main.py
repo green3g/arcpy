@@ -19,12 +19,16 @@ def create_models():
     _create_models()
 
 @cli.command()
-def auto_migration():
+@click.option('--name', default=None, help='Migration name')
+@click.option('--comment', default=None, help='Comment text for migration.')
+def auto_migration(name=None, comment=None):
     """
     automatically create an arcpy migration from model changes
     """
     from arcpy_dbgrate.compare_models import create_migration
-    create_migration()
+    name = name or click.prompt('Migration name')
+    comment = comment or click.prompt('Comment')
+    create_migration(name, comment)
 
 if __name__ == '__main__':
     logging.info('arcpy: Current working directory is {}'.format(WORKING_DIR))
