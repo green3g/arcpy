@@ -12,12 +12,18 @@ path.append(WORKING_DIR)
 
 @cli.command()
 def create_models():
+    """
+    generate a base set of models from existing database tables
+    """
     from arcpy_dbgrate.create_models import create_models as _create_models
     _create_models()
 
 @cli.command()
-def create_migration():
-    from arcpy_dbgrate.compare_models import create_migration as _create_migration
+def auto_migration():
+    """
+    automatically create an arcpy migration from model changes
+    """
+    from arcpy_dbgrate.compare_models import create_migration
     _create_migration()
 
 if __name__ == '__main__':
