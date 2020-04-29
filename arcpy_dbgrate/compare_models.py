@@ -15,6 +15,13 @@ field_skip_keys = [
     'name',
 ]
 
+table_keys = [
+    '_name',
+    '_geometry',
+    '_srid',
+    '_relationships',
+]
+
 def filter_field_keys(key):
     return key not in field_skip_keys
 
@@ -29,8 +36,9 @@ def compare_key(a, b, key):
 
     return a_val == b_val
     
-
 def compare_models():
+    add_tables = []
+    remove_tables = []
     add_fields = []
     remove_fields = []
     update_fields = []
@@ -39,13 +47,33 @@ def compare_models():
     remove_tables = []
 
     models = [basename(f)[:-3] for f in glob(join(getcwd(), 'models', "*.py")) if isfile(f) and not f.endswith('__init__.py')]
+
+    # collect existing data
+    existing_fc = [table.split('.')[-1].upper() for table in arcpy.ListFeatureClasses()]
+    existing_tables = [table.split('.')[-1].upper() for table in arcpy.ListTables()]
     
     for model in models:
         logging.debug('Checking {}'.format(model))
         table = getattr( import_module('models.{}'.format(model)), model)
         table_name = getattr(table, '_name')
-
         field_names = [f for f in dir(table) if not f.startswith('_')]
+
+        # collect table props
+        table_props = {}
+        for prop in [key for key in dir(table) if key in table_keys]:
+            table_props[prop] = getattr(table, prop)
+        table_props['fields'] = [getattr(table, f) for f in field_names]
+        
+        # see if we need to create the table
+        found_table = False
+        if '_geometry' not in table_props or not table_props['_geometry']:
+            found_table = table_props['_name'].upper() in existing_tables
+        else:
+            found_table = table_props['_name'].upper() in existing_fc
+        if not found_table:
+            logging.info('Table not found: {}'.format(table_props['_name']))
+            add_tables.append(table_props)
+            continue
 
         existing_fields = list(filter(filter_fields, map(map_fields, arcpy.ListFields(table_name))))
 
@@ -84,6 +112,8 @@ def compare_models():
         'add_fields': add_fields,
         'update_fields': update_fields,
         'remove_fields': remove_fields,
+        'add_tables': add_tables,
+        'remove_tables': remove_tables,
     }
 
 
