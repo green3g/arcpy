@@ -34,6 +34,10 @@ def compare_key(a, b, key):
     a_val = a[key] if key in a else None
     b_val = b[key] if key in b else None 
 
+    if a_val is None:
+        # if no a val was provided - we don't need to update the b_val
+        return True
+
     return a_val == b_val
     
 def compare_models():
@@ -83,19 +87,19 @@ def compare_models():
             field_obj['name'] = field_name
             existing = find_field(existing_fields, field_name)
             if not existing:
-                logging.debug('Field does not exist yet {}'.format(field_name))
+                logging.debug('Add: {}'.format(field_name))
                 add_fields.append({'table': table_name, 'field': field_obj})
             else:
                 should_update = False
                 for key in filter(filter_field_keys, field_obj.keys()):
                     if not compare_key(field_obj, existing, key):
-                        logging.debug('Key is different: ', key)
+                        logging.debug('Difference: {}, Old Value: {}, New Value: {}'.format(key, ))
                         should_update = True
                 if should_update:
-                    logging.debug('We should update field {}'.format(field_name))
+                    logging.debug('Update: {}'.format(field_name))
                     update_fields.append({'table': table_name, 'field': field_obj})
                 else:
-                    logging.debug('Field {} is the same'.format(field_name))
+                    logging.debug('Match: {}'.format(field_name))
 
         # check for fields that need to be deleted
         for field in existing_fields:
@@ -104,7 +108,7 @@ def compare_models():
                 defined_field = getattr(table, field_name)
             except:
                 # field doesn't exist
-                logging.debug('Field should be removed: {}'.format(field_name))
+                logging.debug('Remove: {}'.format(field_name))
                 remove_fields.append({'table': table_name, 'field': field})
 
     logging.debug('Add: ', add_fields, '\nUpdate: ', update_fields, '\nRemove: ', remove_fields)
