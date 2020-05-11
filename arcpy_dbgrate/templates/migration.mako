@@ -23,7 +23,7 @@ def upgrade():
     % for item in add_tables:
     # add_table(workspace, name, fields, feature_class=False, geometry_type='POINT', spatial_reference=4326)
     <%
-    is_feature = True if '_geometry' in item else False
+    is_feature = True if '_geometry' in item and item['_geometry'] is not None else False
     geometry_type = item['_geometry'] if '_geometry' in item else 'POINT' 
     spatial_reference = item['_srid'] if '_srid' in item else None
     %>
