@@ -75,7 +75,7 @@ def compare_models():
         else:
             found_table = table_props['_name'].upper() in existing_fc
         if not found_table:
-            logging.info('Table not found: {}'.format(table_props['_name']))
+            logging.info('Add: {}'.format(table_props['_name']))
             add_tables.append(table_props)
             continue
 
@@ -87,16 +87,20 @@ def compare_models():
             field_obj['name'] = field_name
             existing = find_field(existing_fields, field_name)
             if not existing:
-                logging.debug('Add: {}'.format(field_name))
+                logging.info('Add: {}'.format(field_name))
                 add_fields.append({'table': table_name, 'field': field_obj})
             else:
                 should_update = False
                 for key in filter(filter_field_keys, field_obj.keys()):
                     if not compare_key(field_obj, existing, key):
-                        logging.debug('Difference: {}, Old Value: {}, New Value: {}'.format(key, ))
+                        logging.debug('Difference: {}, Old Value: {}, New Value: {}'.format(
+                            key, 
+                            existing[key] if key in field_obj else 'Undefined',
+                            field_obj[key] if key in field_obj else 'Undefined',
+                        ))
                         should_update = True
                 if should_update:
-                    logging.debug('Update: {}'.format(field_name))
+                    logging.info('Update: {}'.format(field_name))
                     update_fields.append({'table': table_name, 'field': field_obj})
                 else:
                     logging.debug('Match: {}'.format(field_name))
@@ -108,10 +112,25 @@ def compare_models():
                 defined_field = getattr(table, field_name)
             except:
                 # field doesn't exist
-                logging.debug('Remove: {}'.format(field_name))
+                logging.info('Remove: {}'.format(field_name))
                 remove_fields.append({'table': table_name, 'field': field})
 
-    logging.debug('Add: ', add_fields, '\nUpdate: ', update_fields, '\nRemove: ', remove_fields)
+    logging.info("""
+        Updates Summary: 
+            Fields:
+                Add: {}
+                Update: {}
+                Remove: {}
+            Tables:
+                Add: {}
+                Remove: {}
+    """.format(
+        len(add_fields),
+        len(update_fields),
+        len(remove_fields),
+        len(add_tables),
+        len(remove_tables),
+    ))
     return {
         'add_fields': add_fields,
         'update_fields': update_fields,
