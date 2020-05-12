@@ -36,10 +36,13 @@ def upgrade():
     <% 
     field = item['field'] 
     table = item['table']
-    domain = field['domain'] if 'domain' in field else None
+    alias = "'{}'".format(item['alias']) if 'alias' in item else None
+    length = item['length'] if 'length' in item else None
+    domain = "'{}'".format(field['domain']) if 'domain' in field else None
+    field_type = field['type'] if 'type' in field else 'TEXT'
     %>
     print('Adding field ${field['name']} to ${table}')
-    arcpy.management.AddField('${table}', '${field['name']}', '${field['type']}', None, None, ${field['length']}, '${field['alias']}', field_domain='${domain}')
+    arcpy.management.AddField('${table}', '${field['name']}', '${field_type}', None, None, ${length}, ${alias}, field_domain=${domain})
     % endfor
 
     % for item in remove_fields:
