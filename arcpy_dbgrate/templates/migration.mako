@@ -36,8 +36,8 @@ def upgrade():
     <% 
     field = item['field'] 
     table = item['table']
-    alias = "'{}'".format(item['alias']) if 'alias' in item else None
-    length = item['length'] if 'length' in item else None
+    alias = "'{}'".format(field['alias']) if 'alias' in field else None
+    length = field['length'] if 'length' in field else None
     domain = "'{}'".format(field['domain']) if 'domain' in field else None
     field_type = field['type'] if 'type' in field else 'TEXT'
     %>
