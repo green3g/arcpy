@@ -3,7 +3,7 @@
 class ${table['name']}:
     # table properties
     _name = '${table['name']}'
-    % if 'geometry' in table and table['_geometry'] is not None:
+    % if 'geometry' in table and table['geometry'] is not None:
     _geometry = '${table['geometry']}'
     _srid = ${table['srid']}
     % endif
