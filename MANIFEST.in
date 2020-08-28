@@ -1,1 +1,2 @@
-recursive-include arcpy_dbgrate/templates arcpy_dbgrate/postres *.sql *.mako *.py
+recursive-include arcpy_dbgrate/templates *.mako *.py
+recursive-include arcpy_dbgrate/postgres/sql *.sql
