@@ -31,8 +31,8 @@ def add_table(workspace, name, fields, feature_class=False, geometry_type='POINT
     print('Adding global ids to {}'.format(name))
     arcpy.management.AddGlobalIDs(name)
 
-    print('Adding unique index to {}'.format(name))
-    arcpy.management.AddIndex(name, ['globalid'], "unique_globalid_{}".format(name), "UNIQUE", "ASCENDING")
+    # print('Adding unique index to {}'.format(name))
+    # arcpy.management.AddIndex(name, ['globalid'], "unique_globalid_{}".format(name), "UNIQUE", "ASCENDING")
 
     print('Adding fields to {}'.format(name))
     add_fields(name, fields)
