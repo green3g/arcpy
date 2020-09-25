@@ -87,23 +87,24 @@ def compare_models():
             field_obj['name'] = field_name
             existing = find_field(existing_fields, field_name)
             if not existing:
-                logging.info('Add: {}'.format(field_name))
+                logging.info('Add: {}.{}'.format(table_name, field_name))
                 add_fields.append({'table': table_name, 'field': field_obj})
             else:
                 should_update = False
                 for key in filter(filter_field_keys, field_obj.keys()):
                     if not compare_key(field_obj, existing, key):
-                        logging.debug('Difference: {}, Old Value: {}, New Value: {}'.format(
+                        logging.debug('Difference: {}.{}, Old Value: {}, New Value: {}'.format(
+                            table_name,
                             key, 
                             existing[key] if key in field_obj else 'Undefined',
                             field_obj[key] if key in field_obj else 'Undefined',
                         ))
                         should_update = True
                 if should_update:
-                    logging.info('Update: {}'.format(field_name))
+                    logging.info('Update: {}.{}'.format(table_name, field_name))
                     update_fields.append({'table': table_name, 'field': field_obj})
                 else:
-                    logging.debug('Match: {}'.format(field_name))
+                    logging.debug('Match: {}.{}'.format(table_name, field_name))
 
         # check for fields that need to be deleted
         for field in existing_fields:
@@ -112,7 +113,7 @@ def compare_models():
                 defined_field = getattr(table, field_name)
             except:
                 # field doesn't exist
-                logging.info('Remove: {}'.format(field_name))
+                logging.info('Remove: {}.{}'.format(table_name, field_name))
                 remove_fields.append({'table': table_name, 'field': field})
 
     logging.info("""
