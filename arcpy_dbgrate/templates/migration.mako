@@ -14,6 +14,9 @@ import arcpy
 % if len(update_fields):
 from arcpy_dbgrate.arcpy_helpers import update_field
 % endif
+% if len(add_fields) or len(remove_fields):
+from arcpy_dbgrate.arcpy_helpers import add_field
+% endif
 % if len(add_tables):
 from arcpy_dbgrate.arcpy_helpers import add_table
 % endif
@@ -36,13 +39,9 @@ def upgrade():
     <% 
     field = item['field'] 
     table = item['table']
-    alias = "'{}'".format(field['alias']) if 'alias' in field else None
-    length = field['length'] if 'length' in field else None
-    domain = "'{}'".format(field['domain']) if 'domain' in field else None
-    field_type = field['type'] if 'type' in field else 'TEXT'
     %>
     print('Adding field ${field['name']} to ${table}')
-    arcpy.management.AddField('${table}', '${field['name']}', '${field_type}', None, None, ${length}, ${alias}, field_domain=${domain})
+    add_field(table, field)
     % endfor
 
     % for item in remove_fields:
@@ -51,6 +50,7 @@ def upgrade():
     table = item['table']
     %>
     print('Deleting field ${field['name']} from ${table}')
+    # DeleteField(in_table, drop_field)
     arcpy.management.DeleteField('${table}', ['${field['name']}'])
     % endfor
 
@@ -60,7 +60,7 @@ def upgrade():
     table = item['table']
     %>
     print('Updating field ${field['name']} from ${table}')
-    arcpy.management.AlterField('${table}', '${field['name']}', '${field['alias']}', '${field['type']}', ${field['length']})
+    update_field('${table}', ${field})
     % endfor
 
 def downgrade():
@@ -73,10 +73,9 @@ def downgrade():
     <% 
     field = item['field'] 
     table = item['table']
-    domain = field['domain'] if 'domain' in field else None
     %>
     print('Adding field ${field['name']} to ${table}')
-    arcpy.management.AddField('${table}', '${field['name']}', '${field['type']}', None, None, ${field['length']}, '${field['alias']}', field_domain='${domain}')
+    add_field(table, field)
     % endfor
 
     % for item in add_fields:

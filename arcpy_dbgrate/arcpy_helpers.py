@@ -1,12 +1,23 @@
 import arcpy
 
+'''
+    gets a field dict with defaults
+'''
+def get_field(input):
+    return {
+        'name': input.get('name'),
+        'type': input.get('type', 'TEXT'),
+        'alias': input.get('alias', input.get('name')),
+        'domain': input.get('domain', None),
+        'length': input.get('type', None),
+    }
+    
+
+
 def add_field(table, field):
     print('Adding field {} to {}'.format(field['name'], table))
-    domain = field['domain'] if 'domain' in field else None
-    esri_type = field['type'] if 'type' in field else 'TEXT'
-    esri_length = field['length'] if 'length' in field else 255
-
-    arcpy.management.AddField(table, field['name'], esri_type, None, None, esri_length, field['alias'], field_domain=domain)
+    field = get_field(field)
+    arcpy.management.AddField(table, field['name'], field['type'], None, None, field['length'], field['alias'], field_domain=field['domain'])
 
 def add_fields(table, fields):
     print('Adding {} fields to {}'.format(len(fields), table))
@@ -39,28 +50,8 @@ def add_table(workspace, name, fields, feature_class=False, geometry_type='POINT
 
 def update_field(table, field):
 
-    temp_field = field.copy()
-    temp_field['name'] = 'temp_{}'.format(field['name'])
+    field = get_field(field)
 
-    # add the new temp field
-    print('Add temp field {}'.format(temp_field['name']))
-    add_field(table, temp_field)
-    print('Calculate temp field to {}'.format(field['name']))
-    arcpy.management.CalculateField(table, temp_field['name'], '!{}!'.format(field['name']), "PYTHON")
-
-    # delete the old one
-    print('Remove old field {}'.format(field['name']))
-    arcpy.management.DeleteField(table, field['name'])
-
-    # add the final field 
-    new_field = field.copy()
-    if 'rename' in field:
-        new_field['name'] = field['rename']
-    print('Add final field {}'.format(new_field['name']))
-    add_field(table, new_field)
-    print('Calculate new field from {}'.format(temp_field['name']))
-    arcpy.management.CalculateField(table, new_field['name'], '!{}!'.format(temp_field['name']), 'PYTHON')
-
-    # delete temp field
-    print('Delete temp field {}'.format(temp_field['name']))
-    arcpy.management.DeleteField(table, temp_field['name'])
+    print('Updating field {}'.format(field['name']))
+    # AlterField(in_table, field, {new_field_name}, {new_field_alias}, {field_type}, {field_length}, {field_is_nullable}, {clear_field_alias})
+    arcpy.management.AlterField(table, field['name'], field['name'], field['alias'], field['length'])
