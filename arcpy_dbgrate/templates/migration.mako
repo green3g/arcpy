@@ -60,7 +60,7 @@ def upgrade():
     table = item['table']
     %>
     print('Updating field ${field['name']} from ${table}')
-    update_field('${table}', ${field})
+    arcpy.management.AlterField('${table}', '${field['name']}', '${field['alias']}', '${field['type']}', ${field['length']})
     % endfor
 
 def downgrade():
