@@ -40,18 +40,29 @@ def add_domain(workspace, name, options):
 
 def add_table(workspace, name, fields, feature_class=False, geometry_type='POINT', spatial_reference=4326):
     print('Creating table {}'.format(name))
-    if feature_class:
-        arcpy.management.CreateFeatureclass(workspace, name, geometry_type=geometry_type, spatial_reference=arcpy.SpatialReference(spatial_reference))
+    if not arcpy.Exists(name):
+        if feature_class:
+            arcpy.management.CreateFeatureclass(workspace, name, geometry_type=geometry_type, spatial_reference=arcpy.SpatialReference(spatial_reference))
+        else:
+            arcpy.management.CreateTable(workspace, name)
     else:
-        arcpy.management.CreateTable(workspace, name)
+        print('Table exists: {}'.format(name))
 
-    print('Adding global ids to {}'.format(name))
-    arcpy.management.AddGlobalIDs(name)
+    field_names = [f.name for f in arcpy.ListFields(name)]
+
+    if not 'globalid' in field_names:
+        print('Adding global ids to {}'.format(name))
+        arcpy.management.AddGlobalIDs(name)
+
 
     # print('Adding unique index to {}'.format(name))
     # arcpy.management.AddIndex(name, ['globalid'], "unique_globalid_{}".format(name), "UNIQUE", "ASCENDING")
 
     print('Adding fields to {}'.format(name))
+    for f in fields:
+        if f['name'] in field_names:
+            print('Field exists and will not be added: {}'.format(f['name']))
+            fields.remove(f)
     add_fields(name, fields)
 
 def update_field(table, field):
