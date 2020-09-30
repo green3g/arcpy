@@ -22,7 +22,8 @@ def get_field(input):
 def add_field(table, field):
     print('Adding field {} to {}'.format(field['name'], table))
     field = get_field(field)
-    arcpy.management.AddField(table, field['name'], field['type'], None, None, field['length'], field['alias'], field_domain=field['domain'])
+    # AddField(in_table, field_name, field_type, {field_precision}, {field_scale}, {field_length}, {field_alias}, {field_is_nullable}, {field_is_required}, {field_domain})
+    arcpy.management.AddField(table, field['name'], field['type'], field_length=field['length'], field_alias=field['alias'], field_domain=field['domain'])
 
 def add_fields(table, fields):
     print('Adding {} fields to {}'.format(len(fields), table))
