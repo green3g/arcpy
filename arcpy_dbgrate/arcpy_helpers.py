@@ -9,7 +9,7 @@ def get_field(input):
         'type': input.get('type', 'TEXT'),
         'alias': input.get('alias', input.get('name')),
         'domain': input.get('domain', None),
-        'length': input.get('type', None),
+        'length': input.get('length', None),
     }
 
     if not output['length'] and output['type'] == 'TEXT':
@@ -20,8 +20,8 @@ def get_field(input):
 
 
 def add_field(table, field):
-    print('Adding field {} to {}'.format(field['name'], table))
     field = get_field(field)
+    print('Adding field {}<{}:{}> to {}'.format(field['name'], field['type'], field['length'], table))
     # AddField(in_table, field_name, field_type, {field_precision}, {field_scale}, {field_length}, {field_alias}, {field_is_nullable}, {field_is_required}, {field_domain})
     arcpy.management.AddField(table, field['name'], field['type'], field_length=field['length'], field_alias=field['alias'], field_domain=field['domain'])
 
