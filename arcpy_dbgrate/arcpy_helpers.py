@@ -4,13 +4,18 @@ import arcpy
     gets a field dict with defaults
 '''
 def get_field(input):
-    return {
+    output = {
         'name': input.get('name'),
         'type': input.get('type', 'TEXT'),
         'alias': input.get('alias', input.get('name')),
         'domain': input.get('domain', None),
         'length': input.get('type', None),
     }
+
+    if not output['length'] and output['type'] == 'TEXT':
+        output['length'] = 255
+
+    return output
     
 
 
