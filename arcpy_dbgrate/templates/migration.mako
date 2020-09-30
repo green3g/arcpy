@@ -31,7 +31,11 @@ def upgrade():
     spatial_reference = item['_srid'] if '_srid' in item else None
     %>
     print('Add table ${item['_name']}')
-    add_table(arcpy.env.workspace, '${item['_name']}', ${item['fields']}, feature_class=${is_feature}, geometry_type='${geometry_type}', spatial_reference=${spatial_reference})
+    add_table(arcpy.env.workspace, '${item['_name']}', [
+        %for field in item['fields']:
+        ${field},
+        %endfor
+    ], feature_class=${is_feature}, geometry_type='${geometry_type}', spatial_reference=${spatial_reference})
 
     % endfor
 
