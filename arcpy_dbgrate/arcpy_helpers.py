@@ -71,4 +71,4 @@ def update_field(table, field):
 
     print('Updating field {}'.format(field['name']))
     # AlterField(in_table, field, {new_field_name}, {new_field_alias}, {field_type}, {field_length}, {field_is_nullable}, {clear_field_alias})
-    arcpy.management.AlterField(table, field['name'], field['name'], field['alias'], field['length'])
+    arcpy.management.AlterField(table, field['name'], new_field_alias=field['alias'], field_type=field['type'], field_length=field['length'])
