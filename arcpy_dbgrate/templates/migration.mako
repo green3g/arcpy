@@ -45,7 +45,7 @@ def upgrade():
     table = item['table']
     %>
     print('Adding field ${field['name']} to ${table}')
-    add_field('${table}', '${field['name']}')
+    add_field('${table}', ${field})
     % endfor
 
     % for item in remove_fields:
@@ -79,7 +79,7 @@ def downgrade():
     table = item['table']
     %>
     print('Adding field ${field['name']} to ${table}')
-    add_field('${table}', '${field['name']}')
+    add_field('${table}', ${field}')
     % endfor
 
     % for item in add_fields:
