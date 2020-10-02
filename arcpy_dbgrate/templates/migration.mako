@@ -79,7 +79,7 @@ def downgrade():
     table = item['table']
     %>
     print('Adding field ${field['name']} to ${table}')
-    add_field(table, field)
+    add_field('${table}', '${field['name']}')
     % endfor
 
     % for item in add_fields:
