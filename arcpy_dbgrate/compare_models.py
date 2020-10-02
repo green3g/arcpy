@@ -66,7 +66,17 @@ def compare_models():
         table_props = {}
         for prop in [key for key in dir(table) if key in table_keys]:
             table_props[prop] = getattr(table, prop)
-        table_props['fields'] = [getattr(table, f) for f in field_names]
+        table_props['fields'] = []
+
+        # sanity check
+        for field in field_names:
+            field_props = getattr(table, field)
+            config_name = field_props.get('name', None)
+            if not config_name:
+                field_props['name'] = field
+            if field != field_props.get('name'):
+                logging.warn('{}.{} has mismatched field name ({}) configured. {} will be used.'.format(table_name, field, field_props.get('name'), field))
+                field_props['name'] = field
         
         # see if we need to create the table
         found_table = False
@@ -110,9 +120,10 @@ def compare_models():
         for field in existing_fields:
             field_name = field['name']
             try:
-                defined_field = getattr(table, field_name)
-            except:
+                getattr(table, field_name)
+            except Exception as e:
                 # field doesn't exist
+                logging.debug(e)
                 logging.info('Remove: {}.{}'.format(table_name, field_name))
                 remove_fields.append({'table': table_name, 'field': field})
 
